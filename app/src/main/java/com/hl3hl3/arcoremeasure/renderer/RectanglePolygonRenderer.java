@@ -41,7 +41,7 @@ public class RectanglePolygonRenderer {
             5, 1, 2,  5, 2, 6
     }; // order to draw vertex
 
-    float color[] = {0.63671875f, 0.76953125f, 0.22265625f, 1.0f};
+    float color[] = {1.0f, 0.0f, 0.0f, 1.0f};
 
     public void setVerts(float v0, float v1, float v2,
                          float v3, float v4, float v5,
