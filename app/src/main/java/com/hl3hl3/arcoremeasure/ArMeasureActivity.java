@@ -90,6 +90,11 @@ public class ArMeasureActivity extends AppCompatActivity {
     private final ObjectRenderer cubeSelected = new ObjectRenderer();
     private RectanglePolygonRenderer rectRenderer = null;
 
+    private static final int MAX_CAMERAPOSE_COUNT = 6000;
+    private Pose mPreCameraPose;
+    private Pose mCurCameraPose;
+    private final ArrayList<Anchor> cameraAnchors = new ArrayList<>();
+
     // Temporary matrix allocated here to reduce number of allocations for each frame.
     private final float[] anchorMatrix = new float[MAX_CUBE_COUNT];
     private final ImageView[] ivCubeIconList = new ImageView[MAX_CUBE_COUNT];
@@ -652,6 +657,19 @@ public class ArMeasureActivity extends AppCompatActivity {
 
                 // Compute lighting from average intensity of the image.
                 final float lightIntensity = frame.getLightEstimate().getPixelIntensity();
+
+                // Visualize trajectary
+                if (cameraAnchors.size() <= MAX_CAMERAPOSE_COUNT) {
+                    cameraAnchors.add(session.createAnchor(camera.getDisplayOrientedPose()));
+                }
+                if (cameraAnchors.size() > 2) {
+                    mPreCameraPose = cameraAnchors.get(0).getPose();
+                    for (int i = 1; i < cameraAnchors.size(); i++) {
+                        mCurCameraPose = cameraAnchors.get(i).getPose();
+                        drawLine(mPreCameraPose, mCurCameraPose, viewmtx, projmtx);
+                        mPreCameraPose = mCurCameraPose;
+                    }
+                }
 
                 // Visualize tracked points.
                 PointCloud pointCloud = frame.acquirePointCloud();
